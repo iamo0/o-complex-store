@@ -10,7 +10,12 @@ export default async function Home() {
     <section className="reviews">
       {reviews.map(({ id, text }) => <article
         key={`review-${id}`}
-        dangerouslySetInnerHTML={{ __html: sanitizeHtml(text) }}
+        dangerouslySetInnerHTML={{ __html:
+          sanitizeHtml(text)
+            // NB! Pretty naive solution
+            // but it works for now
+            .replace("h1", "h3")
+        }}
       />)}
     </section>
 
