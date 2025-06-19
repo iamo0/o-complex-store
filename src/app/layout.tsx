@@ -26,12 +26,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-stone-950 text-white`}
       >
         <header>
-          <h1><Link href="/">My Store</Link></h1>
+          <h1 className="text-center text-2xl font-bold p-5"><Link href="/">My Store</Link></h1>
         </header>
-        <main>
+        <main className="p-5 w-xs ml-auto mr-auto">
           {children}
         </main>
       </body>
