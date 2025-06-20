@@ -42,11 +42,11 @@ export default function InputNumber({
       className="control-input order-1 w-[3em] text-center font-bold --font-geist-mono text-lg bg-white text-black p-2 border rounded-sm inset-shadow-sm inset-shadow-stone-200"
     />
     <button
-      className="control-button control-button-dec order-0 bg-stone-200 border-0 rounded-sm px-2"
+      className="control-button control-button-dec order-0 bg-stone-200 disabled:opacity-50 border-0 rounded-sm px-2"
       type="button" disabled={currentValue === min} onClick={handleDecreaseClick}
     >Меньше</button>
     <button
-      className="control-button control-button-inc order-2 bg-stone-200 border-0 rounded-sm px-2"
+      className="control-button control-button-inc order-2 bg-stone-200 disabled:opacity-50 border-0 rounded-sm px-2"
       type="button" disabled={currentValue === max} onClick={handleIncreaseClick}
     >Больше</button>
 
