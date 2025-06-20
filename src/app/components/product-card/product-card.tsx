@@ -18,13 +18,15 @@ enum ProductCardMode {
 
 const DEFAULT_MODE = ProductCardMode.IDLE;
 
+const DEFAULT_FORMATTER = new Intl.NumberFormat("ru-RU", {
+  style: "currency",
+  currency: "RUB",
+  maximumFractionDigits: 0,
+});
+
 export default function ProductCard({
   product,
-  formatter = new Intl.NumberFormat("ru-RU", {
-    style: "currency",
-    currency: "RUB",
-    maximumFractionDigits: 0,
-  }),
+  formatter = DEFAULT_FORMATTER,
 }: ProductCardProps) {
   const { image_url, title, description, price } = product;
 
