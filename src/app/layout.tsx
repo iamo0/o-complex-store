@@ -28,8 +28,8 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-stone-950 text-white`}
       >
-        <header>
-          <h1 className="text-center text-2xl font-bold p-5"><Link href="/">My Store</Link></h1>
+        <header className="sticky top-0 shadow-stone-800 shadow-sm backdrop-blur-xl">
+          <h1 className="text-center text-2xl font-bold p-5 text-shadow-xs text-shadow-stone-400"><Link href="/">My Store</Link></h1>
         </header>
         <main className="p-5 w-xs ml-auto mr-auto">
           {children}

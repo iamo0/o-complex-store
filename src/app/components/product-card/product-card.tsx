@@ -7,7 +7,8 @@ import InputNumber from "../input-number/input-number";
 type ProductCardProps = {
   product: Product,
   formatter?: Intl.NumberFormat,
-  key: string,
+  onAddToCart: (quantity: number) => void,
+  onRemoveFromCart: () => void,
 } & PropsWithChildren;
 
 enum ProductCardMode {
@@ -26,6 +27,8 @@ const DEFAULT_FORMATTER = new Intl.NumberFormat("ru-RU", {
 
 export default function ProductCard({
   product,
+  onAddToCart = () => {},
+  onRemoveFromCart = () => {},
   formatter = DEFAULT_FORMATTER,
 }: ProductCardProps) {
   const { image_url, title, description, price } = product;
@@ -40,6 +43,7 @@ export default function ProductCard({
   function handleAmountSubmit(evt: FormEvent) {
     evt.preventDefault();
     setMode(ProductCardMode.BOUGHT);
+    onAddToCart(selectedAmount);
   }
 
   function handleAmountReset() {
@@ -52,6 +56,7 @@ export default function ProductCard({
     }
 
     setMode(ProductCardMode.IDLE);
+    onRemoveFromCart();
   }
 
   const modeComponent = new Map([
