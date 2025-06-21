@@ -9,12 +9,12 @@ type ProductCardProps = {
   formatter?: Intl.NumberFormat,
   onAddToCart: (quantity: number) => void,
   onRemoveFromCart: () => void,
+  isInCart?: boolean,
 } & PropsWithChildren;
 
 enum ProductCardMode {
   IDLE = "idle",
   BUYING = "buying",
-  BOUGHT = "bought",
 }
 
 const DEFAULT_MODE = ProductCardMode.IDLE;
@@ -27,8 +27,9 @@ const DEFAULT_FORMATTER = new Intl.NumberFormat("ru-RU", {
 
 export default function ProductCard({
   product,
-  onAddToCart = () => {},
-  onRemoveFromCart = () => {},
+  onAddToCart = () => { },
+  onRemoveFromCart = () => { },
+  isInCart = false,
   formatter = DEFAULT_FORMATTER,
 }: ProductCardProps) {
   const { image_url, title, description, price } = product;
@@ -40,13 +41,13 @@ export default function ProductCard({
     setMode(ProductCardMode.BUYING);
   }
 
-  function handleAmountSubmit(evt: FormEvent) {
-    evt.preventDefault();
-    setMode(ProductCardMode.BOUGHT);
-    onAddToCart(selectedAmount);
+  function handleAmountReset() {
+    setMode(ProductCardMode.IDLE);
   }
 
-  function handleAmountReset() {
+  function handleAmountSubmit(evt: FormEvent) {
+    evt.preventDefault();
+    onAddToCart(selectedAmount);
     setMode(ProductCardMode.IDLE);
   }
 
@@ -55,7 +56,6 @@ export default function ProductCard({
       return;
     }
 
-    setMode(ProductCardMode.IDLE);
     onRemoveFromCart();
   }
 
@@ -80,12 +80,6 @@ export default function ProductCard({
         <button type="reset">Отмена</button>
       </div>
     </form>],
-
-    [ProductCardMode.BOUGHT, <button
-      key={`delete-button`}
-      className="px-5 py-2 --font-geist bg-red-950 hover:bg-red-900 border border-lime-900 rounded-sm font-bold text-white"
-      onClick={handleDeleteButtonClick}
-    >✖️&nbsp;Убрать из корзины</button>],
   ]);
 
   return <article
@@ -99,6 +93,14 @@ export default function ProductCard({
     />
     <h3 className="pt-2 pb-1 text-xl font-bold">{title}</h3>
     <p className="mb-4">{description}</p>
-    {modeComponent.get(mode)}
+    {
+      isInCart
+        ? <button
+          key={`delete-button`}
+          className="px-5 py-2 --font-geist bg-red-950 hover:bg-red-900 border border-lime-900 rounded-sm font-bold text-white"
+          onClick={handleDeleteButtonClick}
+        >✖️&nbsp;Убрать из корзины</button>
+        : modeComponent.get(mode)
+    }
   </article>
 }

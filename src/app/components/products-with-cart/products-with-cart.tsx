@@ -4,6 +4,8 @@ import { useReducer, useState } from "react";
 import { Product } from "@/types/product";
 import ProductCard from "../product-card/product-card";
 import cartReducer, { CartReducerActionType } from "@/reducers/cart-reducer";
+import createOrder from "@/actions/orders/create";
+import PendingButton from "../pending-button/pending-button";
 
 interface ProductsWithCartProps {
   products: Product[],
@@ -16,6 +18,7 @@ const PRODUCTS_PRICE_FORMATTER = new Intl.NumberFormat("ru-RU", {
 });
 
 export default function ProductsWithCart({ products }: ProductsWithCartProps) {
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isCartOpened, setIsCartOpened] = useState(false);
   const [cartProducts, dispatch] = useReducer(cartReducer, []);
 
@@ -43,7 +46,24 @@ export default function ProductsWithCart({ products }: ProductsWithCartProps) {
       <button className="absolute top-3 right-3" onClick={() => setIsCartOpened(false)}>Закрыть</button>
 
       <h2 className="font-bold text-xl pb-2">Корзина</h2>
-      <form className="flex flex-col">
+      <form className="flex flex-col" onSubmit={async (evt) => {
+        evt.preventDefault();
+
+        const formElement = evt.target as HTMLFormElement;
+        const response = await createOrder(new FormData(formElement));
+
+        if (response.success === 0) {
+          setErrorMessage(response.error);
+          return;
+        }
+
+        alert("Заказ успешно оформлен");
+
+        setIsCartOpened(false);
+        setErrorMessage(null);
+        dispatch({ type: CartReducerActionType.EMPTY });
+        formElement.reset();
+      }}>
         <fieldset className="flex flex-col gap-5 border-y border-stone-300 my-2 mb-5 py-2">
           {
             cartProducts.length === 0
@@ -77,12 +97,17 @@ export default function ProductsWithCart({ products }: ProductsWithCartProps) {
             className="w-[10em] --font-geist-mono bg-white text-black p-2 border rounded-sm inset-shadow-sm inset-shadow-stone-200"
             required
           />
-          <button
+          <PendingButton
             disabled={cartProducts.length === 0}
             type="submit"
             className="bg-lime-600 hover:bg-lime-500 disabled:opacity-60 disabled:hover:bg-lime-600 px-5 py-2 text-white font-bold rounded-sm"
-          >Заказать</button>
+          >Заказать</PendingButton>
         </fieldset>
+        {
+          errorMessage === null
+            ? null
+            : <div className="mt-3 px-1 py-0.5 font-bold text-xs text-red-900">{errorMessage}</div>
+        }
       </form>
     </dialog>
 
@@ -91,6 +116,10 @@ export default function ProductsWithCart({ products }: ProductsWithCartProps) {
         key={`product-${p.id}`}
         product={p}
         formatter={PRODUCTS_PRICE_FORMATTER}
+        isInCart={
+          cartProducts.length > 0 &&
+          cartProducts.find((cp) => cp.id === p.id) !== undefined
+        }
         onAddToCart={(quantity) => dispatch({
           type: CartReducerActionType.ADD,
           id: p.id,

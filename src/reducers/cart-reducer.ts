@@ -3,6 +3,7 @@ import { ProductInCart } from "@/types/product-in-cart";
 export enum CartReducerActionType {
   ADD = "add",
   REMOVE = "remove",
+  EMPTY = "empty",
 }
 
 type CartReducerAction = {
@@ -12,6 +13,8 @@ type CartReducerAction = {
 } | {
   type: CartReducerActionType.REMOVE,
   id: number,
+} | {
+  type: CartReducerActionType.EMPTY,
 }
 
 export default function cartReducer(state: ProductInCart[], action: CartReducerAction) {
@@ -25,6 +28,10 @@ export default function cartReducer(state: ProductInCart[], action: CartReducerA
 
     case CartReducerActionType.REMOVE: {
       return state.filter((rec) => rec.id !== action.id);
+    }
+
+    case CartReducerActionType.EMPTY: {
+      return [];
     }
   }
 }
