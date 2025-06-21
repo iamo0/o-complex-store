@@ -16,6 +16,11 @@ export default async function Home() {
             sanitizeHtml(text)
               // NB! Pretty naive solution
               // but it works for now
+              // Вообще, я считаю, что это плохая идея — хранить
+              // текстовые данные в виде HTML. Лучше всего или продумать 
+              // сложную структуру (тут отзыв мог бы быть сложным и иметь
+              // заголовок и текст) или хранить другой вид разметки
+              // и настраиваемый препроцессор
               .replace("h1", "h3")
         }}
         className="bg-white text-black p-2 shadow-md shadow-gray-900"
