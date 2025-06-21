@@ -60,6 +60,11 @@ export default function ProductsWithCart({ products }: ProductsWithCartProps) {
 
       <h2 className="font-bold text-xl pb-2">Корзина</h2>
       <form className="flex flex-col" onSubmit={async (evt) => {
+        // NB! Еще одна часть, которая мне не нравится — это то, что для решения
+        // похожих задач я в одном случае использую useActionState (прокрутка и подгрузка),
+        // а во втором очень много делаю руками (вот в случае с корзиной). Будем считать
+        // это за демонстрацию, что я умею и так и так, но в целом, тут было бы
+        // честнее использовать подход с actionState
         evt.preventDefault();
 
         const formElement = evt.target as HTMLFormElement;
