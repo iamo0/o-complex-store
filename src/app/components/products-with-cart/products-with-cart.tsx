@@ -1,5 +1,10 @@
 "use client";
 
+// NB! Меньше всего в проекте мне нравится этот файл, потому что он выполняет две задачи:
+// отрисовывает список товаров и связывает между собой список товаров и корзину. По идее,
+// за это должны отвечать два разных компонента, логика которых не пересекается. Но этот
+// компонент получился жирноватым и сложноватым
+
 import { useActionState, useReducer, useState } from "react";
 import ProductCard from "../product-card/product-card";
 import cartReducer, { CartReducerActionType } from "@/reducers/cart-reducer";
