@@ -22,6 +22,6 @@ export default async function Home() {
       />)}
     </section>
 
-    <ProductsWithCart products={products.items} />
+    <ProductsWithCart products={products} />
   </>;
 }

@@ -1,14 +1,16 @@
 "use client";
 
-import { useReducer, useState } from "react";
-import { Product } from "@/types/product";
+import { useActionState, useReducer, useState } from "react";
 import ProductCard from "../product-card/product-card";
 import cartReducer, { CartReducerActionType } from "@/reducers/cart-reducer";
 import createOrder from "@/actions/orders/create";
 import PendingButton from "../pending-button/pending-button";
+import { PageState } from "@/types/page-state";
+import loadNextPage from "@/actions/products/load-next-page";
+import { ProductsResponse } from "@/types/products-response";
 
 interface ProductsWithCartProps {
-  products: Product[],
+  products: ProductsResponse,
 }
 
 const PRODUCTS_PRICE_FORMATTER = new Intl.NumberFormat("ru-RU", {
@@ -18,6 +20,12 @@ const PRODUCTS_PRICE_FORMATTER = new Intl.NumberFormat("ru-RU", {
 });
 
 export default function ProductsWithCart({ products }: ProductsWithCartProps) {
+  const [loaded, action] = useActionState<PageState>(loadNextPage, {
+    pageNumber: 1,
+    products: products.items,
+    allLoaded: products.items.length >= products.total,
+  });
+
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isCartOpened, setIsCartOpened] = useState(false);
   const [cartProducts, dispatch] = useReducer(cartReducer, []);
@@ -30,7 +38,7 @@ export default function ProductsWithCart({ products }: ProductsWithCartProps) {
         cartProducts.length === 0
           ? "Корзина"
           : PRODUCTS_PRICE_FORMATTER.format(cartProducts.reduce(function (acc: number, { id, quantity }) {
-            return acc + products.find((p) => p.id === id)!.price * quantity;
+            return acc + loaded.products.find((p) => p.id === id)!.price * quantity;
           }, 0))
       }</button>
 
@@ -75,15 +83,15 @@ export default function ProductsWithCart({ products }: ProductsWithCartProps) {
                 <input type="hidden" name="products_ids[]" value={id} />
                 <input type="hidden" name="products_quantities[]" value={quantity} />
                 <span>
-                  {products.find((p) => p.id === id)!.title}
+                  {loaded.products.find((p) => p.id === id)!.title}
                 </span>
                 <div className="flex flex-col items-end">
                   {
                     quantity > 1
-                      ? <span className="text-stone-300 text-xs">{PRODUCTS_PRICE_FORMATTER.format(products.find((p) => p.id === id)!.price)}&times;{quantity}</span>
+                      ? <span className="text-stone-300 text-xs">{PRODUCTS_PRICE_FORMATTER.format(loaded.products.find((p) => p.id === id)!.price)}&times;{quantity}</span>
                       : null
                   }
-                  <span className="font-bold">{PRODUCTS_PRICE_FORMATTER.format(products.find((p) => p.id === id)!.price * quantity)}</span>
+                  <span className="font-bold">{PRODUCTS_PRICE_FORMATTER.format(loaded.products.find((p) => p.id === id)!.price * quantity)}</span>
                 </div>
               </article>)
           }
@@ -112,7 +120,7 @@ export default function ProductsWithCart({ products }: ProductsWithCartProps) {
     </dialog>
 
     <section className="products flex flex-col gap-5">
-      {products.map((p) => <ProductCard
+      {loaded.products.map((p) => <ProductCard
         key={`product-${p.id}`}
         product={p}
         formatter={PRODUCTS_PRICE_FORMATTER}
@@ -131,5 +139,9 @@ export default function ProductsWithCart({ products }: ProductsWithCartProps) {
         })}
       />)}
     </section>
+
+    <form className="flex items-center justify-center pt-7" action={action} hidden={loaded.allLoaded}>
+      <PendingButton className="px-5 py-2 --font-geist bg-lime-700 hover:bg-lime-600 border border-lime-900 rounded-sm font-bold text-white">Показать еще</PendingButton>
+    </form>
   </>;
 }
